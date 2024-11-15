@@ -14,13 +14,13 @@ function App() {
       const response = await fetch('https://ddragon.leagueoflegends.com/cdn/14.22.1/data/en_US/champion.json');
       const data = await response.json();
       console.log(data);
-      // if (data && data.data) {
+      if (data && data.data) {
         const championList = Object.keys(data.data);
         setChampions(championList);
         console.log(championList);
-      // } else {
-      //   console.error('Error: data is invalid or missing.');
-      // }
+      } else {
+        console.error('Error: data is invalid or missing.');
+      }
     } catch (error) {
       console.error('Error fetching champion data:', error);
     }
@@ -36,7 +36,7 @@ function App() {
   }
 
   const shuffleImages = () => {
-    setImageOrder(shuffleArray(champions).slice(0, 5));
+    setImageOrder((prevOrder) => shuffleArray(prevOrder));
   }
 
   
@@ -54,7 +54,7 @@ function App() {
     setScore(0);
     setClickedIds(new Set());
     setIsGameOver(false);
-    shuffleImages();
+    setImageOrder(shuffleArray(champions).slice(0, 5));
   }
   
   useEffect(() => {
@@ -63,9 +63,11 @@ function App() {
 
   useEffect(() => {
     if (champions.length > 0) {
-      shuffleImages();
+      setImageOrder(shuffleArray(champions).slice(0, 5));
+      // const initialOrder = shuffleArray(champions).slice(0, 5);
+      // setImageOrder(initialOrder);
     }
-  }, [champions]);
+  }, []);
 
 
   return (
