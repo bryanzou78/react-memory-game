@@ -6,7 +6,25 @@ function App() {
   const [score, setScore] = useState(0);
   const [clickedIds, setClickedIds] = useState(new Set());
   const [isGameOver, setIsGameOver] = useState(false);
-  const [buttonOrder, setButtonOrder] = useState([1, 2, 3, 4, 5]);
+  const [imageOrder, setImageOrder] = useState([]);
+  const [champions, setChampions] = useState([]);
+
+  const fetchChampionData = async () => {
+    try {
+      const response = await fetch('https://ddragon.leagueoflegends.com/cdn/14.22.1/data/en_US/champion.json');
+      const data = await response.json();
+      console.log(data);
+      // if (data && data.data) {
+        const championList = Object.keys(data.data);
+        setChampions(championList);
+        console.log(championList);
+      // } else {
+      //   console.error('Error: data is invalid or missing.');
+      // }
+    } catch (error) {
+      console.error('Error fetching champion data:', error);
+    }
+  }
 
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
@@ -17,31 +35,38 @@ function App() {
     return shuffledArray;
   }
 
-  const shuffleButtons = () => {
-    setButtonOrder(shuffleArray([1, 2, 3, 4, 5]));
+  const shuffleImages = () => {
+    setImageOrder(shuffleArray(champions).slice(0, 5));
   }
 
-  useEffect(() => {
-    shuffleButtons();
-  }, []);
-
-  const handleCardClick = (id) => {
-    if(clickedIds.has(id)) {
+  
+  const handleCardClick = (championId) => {
+    if(clickedIds.has(championId)) {
       setIsGameOver(true);
       return;
     }
-    
-      setClickedIds((prev) => new Set(prev).add(id));
-      setScore((prevScore) => prevScore + 1);
-      shuffleButtons();
+    setClickedIds((prev) => new Set(prev).add(championId));
+    setScore((prevScore) => prevScore + 1);
+    shuffleImages();
   }
-
+  
   const handleReset = () => {
     setScore(0);
     setClickedIds(new Set());
     setIsGameOver(false);
-    shuffleButtons();
+    shuffleImages();
   }
+  
+  useEffect(() => {
+    fetchChampionData();
+  }, []);
+
+  useEffect(() => {
+    if (champions.length > 0) {
+      shuffleImages();
+    }
+  }, [champions]);
+
 
   return (
     <>
@@ -55,12 +80,16 @@ function App() {
         ) : (
           <div>
             <p>Score: {score}</p>
-            <button onClick={handleReset}>Reset</button>
-            {buttonOrder.map((id) => (
-              <button key={id} onClick={() => handleCardClick(id)} disabled={isGameOver}>
-                {id}
-              </button>
-            ))}
+            <div>
+              {imageOrder.map((championId) => (
+                <img
+                    key={championId}
+                    onClick={() => handleCardClick(championId)}
+                    src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${championId}_0.jpg`}
+                    alt={championId}
+                  />
+              ))}
+            </div>
           </div>
           )
 }
