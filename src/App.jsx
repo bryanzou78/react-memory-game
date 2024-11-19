@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-// import CardContainer from "./components/CardContainer"
+import CardContainer from "./components/CardContainer"
 import './App.css'
 
 function App() {
@@ -54,7 +54,7 @@ function App() {
     setScore(0);
     setClickedIds(new Set());
     setIsGameOver(false);
-    setImageOrder(shuffleArray(champions).slice(0, 5));
+    setImageOrder(shuffleArray(champions).slice(0, 10));
   }
   
   useEffect(() => {
@@ -63,9 +63,7 @@ function App() {
 
   useEffect(() => {
     if (champions.length > 0) {
-      setImageOrder(shuffleArray(champions).slice(0, 5));
-      // const initialOrder = shuffleArray(champions).slice(0, 5);
-      // setImageOrder(initialOrder);
+      setImageOrder(shuffleArray(champions).slice(0, 10));
     }
   }, []);
 
@@ -82,16 +80,7 @@ function App() {
         ) : (
           <div>
             <p>Score: {score}</p>
-            <div>
-              {imageOrder.map((championId) => (
-                <img
-                    key={championId}
-                    onClick={() => handleCardClick(championId)}
-                    src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${championId}_0.jpg`}
-                    alt={championId}
-                  />
-              ))}
-            </div>
+            <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>
           </div>
           )
 }
