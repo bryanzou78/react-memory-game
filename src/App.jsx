@@ -75,11 +75,11 @@ function App() {
         {isGameOver ? (
           <div>
             <h2>Game Over! Your score was {score}</h2>
-            <button onClick={handleReset}>Reset</button>
+            <button className='reset-btn' onClick={handleReset}>Reset</button>
           </div>
         ) : (
           <div>
-            <p>Score: {score}</p>
+            <h2>Score: {score}</h2>
             <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>
           </div>
           )

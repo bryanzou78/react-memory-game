@@ -2,5 +2,41 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body {
   background-color: lightblue;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+h2 {
+  text-align: center;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  margin: 50px 250px;
+}
+
+.card {
+  width: 150px;
+  cursor: pointer;
+}
+
+.reset-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: lightgreen;
+  font-weight: bold;
+  font-size: 20px;
 }
