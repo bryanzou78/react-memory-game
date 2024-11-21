@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import CardContainer from "./components/CardContainer"
-import './App.css'
+import CardContainer from './components/CardContainer'
+import Header from './components/Header'
 
 function App() {
   const [score, setScore] = useState(0);
@@ -79,27 +79,8 @@ function App() {
 
   return (
     <>
-      <div>
-        <h1>Memory Game</h1>
-        {gameStatus === 'playing' && (
-          <div>
-            <h2>Score: {score}</h2>
-            <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>
-          </div>
-        )}
-        {gameStatus === 'won' && (
-          <div>
-            <h2>You won!</h2>
-            <button className='reset-btn' onClick={handleReset}>Play Again</button>
-          </div>
-        )}
-        {gameStatus === 'lost' && (
-          <div>
-            <h2>Game Over! Your score was {score}</h2>
-            <button className='reset-btn' onClick={handleReset}>Try Again</button>
-          </div>
-        )}
-      </div>
+      <Header score={score} gameStatus={gameStatus} onReset={handleReset} />
+      {gameStatus === 'playing' && <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>}
     </>
   )
 }
