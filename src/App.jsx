@@ -5,7 +5,7 @@ import './App.css'
 function App() {
   const [score, setScore] = useState(0);
   const [clickedIds, setClickedIds] = useState(new Set());
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameStatus, setGameStatus] = useState('playing');
   const [imageOrder, setImageOrder] = useState([]);
   const [champions, setChampions] = useState([]);
 
@@ -42,18 +42,27 @@ function App() {
   
   const handleCardClick = (championId) => {
     if(clickedIds.has(championId)) {
-      setIsGameOver(true);
+      setGameStatus('lost');
       return;
     }
+
     setClickedIds((prev) => new Set(prev).add(championId));
-    setScore((prevScore) => prevScore + 1);
+
+    setScore((prevScore) => {
+      const newScore = prevScore + 1;
+      if(newScore === 10) {
+        setGameStatus('won');
+      }
+      return newScore;
+    });
+
     shuffleImages();
   }
   
   const handleReset = () => {
     setScore(0);
     setClickedIds(new Set());
-    setIsGameOver(false);
+    setGameStatus('playing');
     setImageOrder(shuffleArray(champions).slice(0, 10));
   }
   
@@ -65,25 +74,31 @@ function App() {
     if (champions.length > 0) {
       setImageOrder(shuffleArray(champions).slice(0, 10));
     }
-  }, []);
+  }, [champions]);
 
 
   return (
     <>
       <div>
         <h1>Memory Game</h1>
-        {isGameOver ? (
-          <div>
-            <h2>Game Over! Your score was {score}</h2>
-            <button className='reset-btn' onClick={handleReset}>Reset</button>
-          </div>
-        ) : (
+        {gameStatus === 'playing' && (
           <div>
             <h2>Score: {score}</h2>
             <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>
           </div>
-          )
-}
+        )}
+        {gameStatus === 'won' && (
+          <div>
+            <h2>You won!</h2>
+            <button className='reset-btn' onClick={handleReset}>Play Again</button>
+          </div>
+        )}
+        {gameStatus === 'lost' && (
+          <div>
+            <h2>Game Over! Your score was {score}</h2>
+            <button className='reset-btn' onClick={handleReset}>Try Again</button>
+          </div>
+        )}
       </div>
     </>
   )
