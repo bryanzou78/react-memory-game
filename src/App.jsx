@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import CardContainer from './components/CardContainer'
 import Header from './components/Header'
+import CardContainer from './components/CardContainer'
+import useGameLogic from './hooks/useGameLogic'
 
 function App() {
-  const [score, setScore] = useState(0);
-  const [clickedIds, setClickedIds] = useState(new Set());
-  const [gameStatus, setGameStatus] = useState('playing');
-  const [imageOrder, setImageOrder] = useState([]);
+  const { score, gameStatus, imageOrder, handleCardClick, handleReset } = useGameLogic(champions);
+
   const [champions, setChampions] = useState([]);
 
   const fetchChampionData = async () => {
@@ -26,61 +25,18 @@ function App() {
     }
   }
 
-  const shuffleArray = (array) => {
-    const shuffledArray = [...array];
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-    }
-    return shuffledArray;
-  }
-
-  const shuffleImages = () => {
-    setImageOrder((prevOrder) => shuffleArray(prevOrder));
-  }
-
-  
-  const handleCardClick = (championId) => {
-    if(clickedIds.has(championId)) {
-      setGameStatus('lost');
-      return;
-    }
-
-    setClickedIds((prev) => new Set(prev).add(championId));
-
-    setScore((prevScore) => {
-      const newScore = prevScore + 1;
-      if(newScore === 10) {
-        setGameStatus('won');
-      }
-      return newScore;
-    });
-
-    shuffleImages();
-  }
-  
-  const handleReset = () => {
-    setScore(0);
-    setClickedIds(new Set());
-    setGameStatus('playing');
-    setImageOrder(shuffleArray(champions).slice(0, 10));
-  }
   
   useEffect(() => {
     fetchChampionData();
   }, []);
 
-  useEffect(() => {
-    if (champions.length > 0) {
-      setImageOrder(shuffleArray(champions).slice(0, 10));
-    }
-  }, [champions]);
-
 
   return (
     <>
       <Header score={score} gameStatus={gameStatus} onReset={handleReset} />
-      {gameStatus === 'playing' && <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>}
+      {gameStatus === 'playing' && (
+        <CardContainer imageOrder={imageOrder} onCardClick={handleCardClick}/>
+      )}
     </>
   )
 }
