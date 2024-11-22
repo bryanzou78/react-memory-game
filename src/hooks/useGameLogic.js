@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const useGameLogic (champions) => {
+const useGameLogic = (champions) => {
+    //States
     const [score, setScore] = useState(0);
     const [clickedIds, setClickedIds] = useState(new Set());
     const [gameStatus, setGameStatus] = useState('playing');
     const [imageOrder, setImageOrder] = useState([]);
 
+    //Generic shuffle
     const shuffleArray = (array) => {
         const shuffledArray = [...array];
         for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -14,7 +16,7 @@ const useGameLogic (champions) => {
         }
         return shuffledArray;
     }
-
+    //Shuffle for normal mode to keep same cards
     const shuffleImages = () => {
         setImageOrder((prevOrder) => shuffleArray(prevOrder));
     }
@@ -44,7 +46,7 @@ const useGameLogic (champions) => {
         setGameStatus('playing');
         setImageOrder(shuffleArray(champions).slice(0, 10));
     }
-
+    //Initialize image order after data fetch and champions get passed down
     useEffect(() => {
         if (champions.length > 0) {
           setImageOrder(shuffleArray(champions).slice(0, 10));
