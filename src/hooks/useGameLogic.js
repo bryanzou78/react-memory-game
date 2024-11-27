@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import back1 from '../assets/CardBacks/back1.png';
+import back2 from '../assets/CardBacks/back2.png';
+import back3 from '../assets/CardBacks/back3.png';
+import back4 from '../assets/CardBacks/back4.png';
+import back5 from '../assets/CardBacks/back5.png';
 
 const useGameLogic = (champions) => {
     //States
@@ -10,8 +14,9 @@ const useGameLogic = (champions) => {
     const [chosenBack, setChosenBack] = useState(null);
     const [allFlipped, setAllFlipped] = useState(false);
 
+    
     const cardBackImages = [
-        back1
+      back1, back2, back3, back4, back5
     ]
 
     //Generic shuffle
