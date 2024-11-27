@@ -6,7 +6,6 @@ import back4 from '../assets/CardBacks/back4.png';
 import back5 from '../assets/CardBacks/back5.png';
 
 const useGameLogic = (champions) => {
-    //States
     const [score, setScore] = useState(0);
     const [clickedIds, setClickedIds] = useState(new Set());
     const [gameStatus, setGameStatus] = useState('playing');
@@ -41,7 +40,7 @@ const useGameLogic = (champions) => {
         //Choose random card back for all cards after a click
         const randomBack = cardBackImages[Math.floor(Math.random() * cardBackImages.length)];
         setChosenBack(randomBack);
-        //Immediately update state
+        //Immediate state updates
         setClickedIds((prev) => new Set(prev).add(championId));
         setScore((prevScore) => {
           const newScore = prevScore + 1;
@@ -78,7 +77,7 @@ const useGameLogic = (champions) => {
         setGameStatus('playing');
         setImageOrder(shuffleArray(champions).slice(0, 10));
     }
-    //Initialize image order after data fetch and champions get passed down
+    //Initialize image order after data fetch and champions get passed to App
     useEffect(() => {
         if (champions.length > 0) {
             setImageOrder(shuffleArray(champions).slice(0, 10));
