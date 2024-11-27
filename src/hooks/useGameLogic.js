@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import back1 from '../assets/CardBacks/back1.png';
 
 const useGameLogic = (champions) => {
     //States
@@ -6,13 +7,19 @@ const useGameLogic = (champions) => {
     const [clickedIds, setClickedIds] = useState(new Set());
     const [gameStatus, setGameStatus] = useState('playing');
     const [imageOrder, setImageOrder] = useState([]);
+    const [chosenBack, setChosenBack] = useState(null);
+    const [allFlipped, setAllFlipped] = useState(false);
+
+    const cardBackImages = [
+        back1
+    ]
 
     //Generic shuffle
     const shuffleArray = (array) => {
         const shuffledArray = [...array];
         for (let i = shuffledArray.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
         }
         return shuffledArray;
     }
@@ -23,21 +30,41 @@ const useGameLogic = (champions) => {
 
     const handleCardClick = (championId) => {
         if(clickedIds.has(championId)) {
-          setGameStatus('lost');
-          return;
+            setGameStatus('lost');
+            return;
         }
-    
+        //Choose random card back for all cards after a click
+        const randomBack = cardBackImages[Math.floor(Math.random() * cardBackImages.length)];
+        setChosenBack(randomBack);
+        //Immediately update state
         setClickedIds((prev) => new Set(prev).add(championId));
-    
         setScore((prevScore) => {
           const newScore = prevScore + 1;
           if(newScore === 10) {
             setGameStatus('won');
-          }
+          } 
           return newScore;
-        });
-    
-        shuffleImages();
+        })
+        //Add .is-flipped class to trigger animation
+        setAllFlipped(true);
+        //Outer setTimeout to replace .is-flipped with .reset-animation
+        setTimeout(() => {
+          shuffleImages();
+            document.querySelectorAll('.card').forEach((card) => {
+                card.classList.remove('is-flipped');
+                card.classList.add('reset-animation');
+            })
+            //Inner setTimeout to remove .reset-animation after animation
+            setTimeout(() => {
+                document.querySelectorAll('.card').forEach((card) => {
+                    card.classList.remove('reset-animation');
+                });
+                setAllFlipped(false);
+            }, 500);
+          
+
+        }, 1000)
+
     }
 
     const handleReset = () => {
@@ -49,11 +76,11 @@ const useGameLogic = (champions) => {
     //Initialize image order after data fetch and champions get passed down
     useEffect(() => {
         if (champions.length > 0) {
-          setImageOrder(shuffleArray(champions).slice(0, 10));
+            setImageOrder(shuffleArray(champions).slice(0, 10));
         }
       }, [champions]);
 
-    return { score, gameStatus, imageOrder, handleCardClick, handleReset };
+    return { score, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleReset };
 }
 
 export default useGameLogic;
