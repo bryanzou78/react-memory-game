@@ -1,19 +1,17 @@
-const Header = ({ gameStatus, score, onReset }) => {
+const Header = ({ gameStatus, score, onNormalReset, onExtremeReset }) => {
     return (
-        <div>
+        <div className='header-container'>
             <h1>Memory Game</h1>
-            {gameStatus === 'playing' && <h2>Score: {score}</h2>}
             {gameStatus === 'won' && (
-            <div>
-                <h2>You won!</h2>
-                <button className='reset-btn' onClick={onReset}>Play Again</button>
-            </div>
+                <h2>You won! Play again?</h2>
             )}
             {gameStatus === 'lost' && (
-            <div>
-                <h2>Game Over! Your score was {score}</h2>
-                <button className='reset-btn' onClick={onReset}>Try Again</button>
-            </div>
+                <h2>Game Over! Your score was {score}. Try again?</h2>
+            )}
+            <button className='reset-btn normal-btn' onClick={onNormalReset}>Normal</button>
+            <button className='reset-btn extreme-btn' onClick={onExtremeReset}>Extreme</button>
+            {(gameStatus === 'playingNormal' || gameStatus === 'playingExtreme') && (
+                    <h2>Score: {score}</h2>
             )}
         </div>
     )

@@ -11,7 +11,11 @@ body {
   background-position: bottom;
   background-repeat: no-repeat;
   min-height: 100vh;
-  overflow: hidden;
+  /* overflow: hidden; */
+}
+
+.header-container {
+  text-align: center;
 }
 
 h1 {
@@ -24,13 +28,21 @@ h2 {
 }
 
 .reset-btn {
-  display: block;
-  margin: 20px auto;
+  display: inline-block;
+  margin: 20px;
   padding: 10px;
   border-radius: 10px;
-  background-color: lightgreen;
   font-weight: bold;
   font-size: 20px;
+  justify-items: center;
+}
+
+.normal-btn {
+  background-color: lightgreen;
+}
+
+.extreme-btn {
+  background-color: orangered;
 }
 
 @keyframes flipToBack {

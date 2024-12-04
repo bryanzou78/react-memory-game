@@ -8,7 +8,7 @@ import back5 from '../assets/CardBacks/back5.png';
 const useGameLogic = (champions) => {
     const [score, setScore] = useState(0);
     const [clickedIds, setClickedIds] = useState(new Set());
-    const [gameStatus, setGameStatus] = useState('playing');
+    const [gameStatus, setGameStatus] = useState('playingNormal');
     const [imageOrder, setImageOrder] = useState([]);
     const [chosenBack, setChosenBack] = useState(null);
     const [allFlipped, setAllFlipped] = useState(false);
@@ -71,12 +71,20 @@ const useGameLogic = (champions) => {
 
     }
 
-    const handleReset = () => {
+    const handleNormalReset = () => {
         setScore(0);
         setClickedIds(new Set());
-        setGameStatus('playing');
+        setGameStatus('playingNormal');
         setImageOrder(shuffleArray(champions).slice(0, 10));
     }
+
+    const handleExtremeReset = () => {
+        setScore(0);
+        setClickedIds(new Set());
+        setGameStatus('playingExtreme');
+        setImageOrder(shuffleArray(champions).slice(0, 10));
+    }
+
     //Initialize image order after data fetch and champions get passed to App
     useEffect(() => {
         if (champions.length > 0) {
@@ -84,7 +92,7 @@ const useGameLogic = (champions) => {
         }
       }, [champions]);
 
-    return { score, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleReset };
+    return { score, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleNormalReset, handleExtremeReset };
 }
 
 export default useGameLogic;
