@@ -29,7 +29,12 @@ const useGameLogic = (champions) => {
     }
     //Shuffle for normal mode to keep same cards
     const shuffleImages = () => {
-        setImageOrder((prevOrder) => shuffleArray(prevOrder));
+        if (gameStatus === 'playingNormal') {
+            setImageOrder((prevOrder) => shuffleArray(prevOrder));
+        }
+        if (gameStatus === 'playingExtreme') {
+            setImageOrder(shuffleArray(champions).slice(0, 10));
+        }
     }
 
     const handleCardClick = (championId) => {
@@ -43,39 +48,35 @@ const useGameLogic = (champions) => {
         //Immediate state updates
         setClickedIds((prev) => new Set(prev).add(championId));
         setScore((prevScore) => {
-          const newScore = prevScore + 1;
-          if(newScore === 10) {
-            setGameStatus('won');
-          } 
-          return newScore;
+            const newScore = prevScore + 1;
+            if(newScore === 10) {
+                setGameStatus('won');
+            } 
+            return newScore;
         })
         //Add .is-flipped class to trigger animation
         setAllFlipped(true);
-        //Outer setTimeout to replace .is-flipped with .reset-animation
+        //Shuffle images when cards are on back
         setTimeout(() => {
-          shuffleImages();
-            document.querySelectorAll('.card').forEach((card) => {
+            shuffleImages();
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card) => {
                 card.classList.remove('is-flipped');
                 card.classList.add('reset-animation');
-            })
-            //Inner setTimeout to remove .reset-animation after animation
+            });
+            //Remove .reset-animation after animation
             setTimeout(() => {
-                document.querySelectorAll('.card').forEach((card) => {
-                    card.classList.remove('reset-animation');
-                });
+                cards.forEach((card) => card.classList.remove('reset-animation'));
                 setAllFlipped(false);
             }, 500);
-          
-
-        }, 1000)
-
+        }, 800)
     }
-
     const handleNormalReset = () => {
         setScore(0);
         setClickedIds(new Set());
         setGameStatus('playingNormal');
         setImageOrder(shuffleArray(champions).slice(0, 10));
+        setAllFlipped(false);
     }
 
     const handleExtremeReset = () => {
@@ -83,6 +84,7 @@ const useGameLogic = (champions) => {
         setClickedIds(new Set());
         setGameStatus('playingExtreme');
         setImageOrder(shuffleArray(champions).slice(0, 10));
+        setAllFlipped(false);
     }
 
     //Initialize image order after data fetch and champions get passed to App
