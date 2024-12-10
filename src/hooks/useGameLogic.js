@@ -14,9 +14,8 @@ const useGameLogic = (champions) => {
     const [allFlipped, setAllFlipped] = useState(false);
 
     
-    const cardBackImages = [
-      back1, back2, back3, back4, back5
-    ]
+    const cardBackImages = [back1, back2, back3, back4, back5]
+    const CARD_COUNT = 10;
 
     //Generic shuffle
     const shuffleArray = (array) => {
@@ -27,13 +26,25 @@ const useGameLogic = (champions) => {
         }
         return shuffledArray;
     }
-    //Shuffle for normal mode to keep same cards
     const shuffleImages = () => {
+        //Shuffle for normal mode to keep same cards
         if (gameStatus === 'playingNormal') {
             setImageOrder((prevOrder) => shuffleArray(prevOrder));
+            return;
         }
         if (gameStatus === 'playingExtreme') {
-            setImageOrder(shuffleArray(champions).slice(0, 10));
+            let newShuffle = shuffleArray(champions).slice(0, CARD_COUNT);
+            //Check if new shuffle has cards that have all been clicked
+            if (newShuffle.every((champion) => clickedIds.has(champion.id))) {
+                //If so, then randomly replace one card with a random unclicked champion
+                const unclickedChampions = champions.filter((champion) => !clickedIds.has(champion.id));
+                if(unclickedChampions > 0) {
+                    const randomIndex = Math.floor(Math.random() * CARD_COUNT);
+                    const newChampion = unclickedChampions[Math.floor(Math.random() * unclickedChampions.length)];
+                    newShuffle[randomIndex] = newChampion;
+                }
+            }
+            setImageOrder(newShuffle);
         }
     }
 
@@ -46,18 +57,24 @@ const useGameLogic = (champions) => {
         const randomBack = cardBackImages[Math.floor(Math.random() * cardBackImages.length)];
         setChosenBack(randomBack);
         //Immediate state updates
-        setClickedIds((prev) => new Set(prev).add(championId));
+        setClickedIds((prev) => {
+            const updatedClickedIds = new Set(prev).add(championId);
+            if (gameStatus === 'playingExtreme' && updatedClickedIds.size === champions.length) {
+                setGameStatus('won');
+            }
+            return updatedClickedIds;
+        })
         setScore((prevScore) => {
             const newScore = prevScore + 1;
-            if(newScore === 10) {
+            if(gameStatus === 'playingNormal' && newScore === CARD_COUNT) {
                 setGameStatus('won');
             } 
             return newScore;
         })
         //Add .is-flipped class to trigger animation
         setAllFlipped(true);
-        //Shuffle images when cards are on back
         setTimeout(() => {
+            //Shuffle images when cards are on back
             shuffleImages();
             const cards = document.querySelectorAll('.card');
             cards.forEach((card) => {
@@ -69,13 +86,13 @@ const useGameLogic = (champions) => {
                 cards.forEach((card) => card.classList.remove('reset-animation'));
                 setAllFlipped(false);
             }, 500);
-        }, 800)
+        }, 500)
     }
     const handleNormalReset = () => {
         setScore(0);
         setClickedIds(new Set());
         setGameStatus('playingNormal');
-        setImageOrder(shuffleArray(champions).slice(0, 10));
+        setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
         setAllFlipped(false);
     }
 
@@ -83,14 +100,14 @@ const useGameLogic = (champions) => {
         setScore(0);
         setClickedIds(new Set());
         setGameStatus('playingExtreme');
-        setImageOrder(shuffleArray(champions).slice(0, 10));
+        setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
         setAllFlipped(false);
     }
 
     //Initialize image order after data fetch and champions get passed to App
     useEffect(() => {
         if (champions.length > 0) {
-            setImageOrder(shuffleArray(champions).slice(0, 10));
+            setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
         }
       }, [champions]);
 
