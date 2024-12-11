@@ -7,6 +7,7 @@ import back5 from '../assets/CardBacks/back5.png';
 
 const useGameLogic = (champions) => {
     const [score, setScore] = useState(0);
+    const [extremeScores, setExtremeScores] = useState([]);
     const [clickedIds, setClickedIds] = useState(new Set());
     const [gameStatus, setGameStatus] = useState('playingNormal');
     const [imageOrder, setImageOrder] = useState([]);
@@ -50,6 +51,9 @@ const useGameLogic = (champions) => {
 
     const handleCardClick = (championId) => {
         if(clickedIds.has(championId)) {
+            if(gameStatus === 'playingExtreme') {
+                setExtremeScores((prev) => [...prev, score]);
+            }
             setGameStatus('lost');
             return;
         }
@@ -109,9 +113,11 @@ const useGameLogic = (champions) => {
         if (champions.length > 0) {
             setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
         }
-      }, [champions]);
+    }, [champions]);
 
-    return { score, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleNormalReset, handleExtremeReset };
+    const highScore = extremeScores.reduce((highest, current) => (current > highest ? current : highest), extremeScores[0]);
+
+    return { score, highScore, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleNormalReset, handleExtremeReset };
 }
 
 export default useGameLogic;

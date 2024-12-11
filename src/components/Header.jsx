@@ -1,4 +1,4 @@
-const Header = ({ gameStatus, score, onNormalReset, onExtremeReset }) => {
+const Header = ({ gameStatus, score, highScore, onNormalReset, onExtremeReset }) => {
     return (
         <div className='header-container'>
             <h1>Memory Game</h1>
@@ -27,7 +27,8 @@ const Header = ({ gameStatus, score, onNormalReset, onExtremeReset }) => {
             {gameStatus === 'playingExtreme' && (
                 <div>
                     <p>League of Legends currently has 140+ champions. Click each champion only once. Game becomes more difficult the more champions you click, but there will always be at least one viable option until you win.</p>
-                    <h2>Score: {score}</h2>
+                    <h2>Highest Exteme Mode Score: {highScore}</h2>
+                    <h2>Current Score: {score}</h2>
                     <button className='reset-btn normal-btn normal-btn-inactive' onClick={onNormalReset}>Normal</button>
                     <button className='reset-btn extreme-btn extreme-btn-active' onClick={onExtremeReset}>Extreme</button>
                 </div>

@@ -5,12 +5,13 @@ import useFetchChampions from './hooks/useFetchChampions'
 
 function App() {
   const champions = useFetchChampions();
-  const { score, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleNormalReset, handleExtremeReset } = useGameLogic(champions);
+  const { score, highScore, gameStatus, imageOrder, allFlipped, chosenBack, handleCardClick, handleNormalReset, handleExtremeReset } = useGameLogic(champions);
 
   return (
     <>
       <Header 
-      score={score} 
+      score={score}
+      highScore={highScore}
       gameStatus={gameStatus} 
       onNormalReset={handleNormalReset}
       onExtremeReset={handleExtremeReset} 
