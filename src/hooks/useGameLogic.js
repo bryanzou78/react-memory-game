@@ -92,6 +92,7 @@ const useGameLogic = (champions) => {
             }, 500);
         }, 500)
     }
+    
     const handleNormalReset = () => {
         setScore(0);
         setClickedIds(new Set());
