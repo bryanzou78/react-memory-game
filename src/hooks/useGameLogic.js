@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import back1 from '../assets/CardBacks/back1.png';
 import back2 from '../assets/CardBacks/back2.png';
 import back3 from '../assets/CardBacks/back3.png';
@@ -14,31 +14,33 @@ const useGameLogic = (champions) => {
     const [chosenBack, setChosenBack] = useState(null);
     const [allFlipped, setAllFlipped] = useState(false);
 
-    
-    const cardBackImages = [back1, back2, back3, back4, back5]
+    const championsRef = useRef(champions);
+
+    const cardBackImages = useMemo(() => [back1, back2, back3, back4, back5], []);
     const CARD_COUNT = 10;
 
     //Generic shuffle
-    const shuffleArray = (array) => {
+    const shuffleArray = useCallback((array) => {
         const shuffledArray = [...array];
         for (let i = shuffledArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
         }
         return shuffledArray;
-    }
-    const shuffleImages = () => {
+    }, []);
+
+    const shuffleImages = useCallback(() => {
         //Shuffle for normal mode to keep same cards
         if (gameStatus === 'playingNormal') {
             setImageOrder((prevOrder) => shuffleArray(prevOrder));
             return;
         }
         if (gameStatus === 'playingExtreme') {
-            let newShuffle = shuffleArray(champions).slice(0, CARD_COUNT);
+            let newShuffle = shuffleArray(championsRef.current).slice(0, CARD_COUNT);
             //Check if new shuffle has cards that have all been clicked
             if (newShuffle.every((champion) => clickedIds.has(champion.id))) {
                 //If so, then randomly replace one card with a random unclicked champion
-                const unclickedChampions = champions.filter((champion) => !clickedIds.has(champion.id));
+                const unclickedChampions = championsRef.current.filter((champion) => !clickedIds.has(champion.id));
                 if(unclickedChampions > 0) {
                     const randomIndex = Math.floor(Math.random() * CARD_COUNT);
                     const newChampion = unclickedChampions[Math.floor(Math.random() * unclickedChampions.length)];
@@ -47,9 +49,9 @@ const useGameLogic = (champions) => {
             }
             setImageOrder(newShuffle);
         }
-    }
+    }, [gameStatus, clickedIds, shuffleArray]);
 
-    const handleCardClick = (championId) => {
+    const handleCardClick = useCallback((championId) => {
         if(clickedIds.has(championId)) {
             if(gameStatus === 'playingExtreme') {
                 setExtremeScores((prev) => [...prev, score]);
@@ -63,7 +65,7 @@ const useGameLogic = (champions) => {
         //Immediate state updates
         setClickedIds((prev) => {
             const updatedClickedIds = new Set(prev).add(championId);
-            if (gameStatus === 'playingExtreme' && updatedClickedIds.size === champions.length) {
+            if (gameStatus === 'playingExtreme' && updatedClickedIds.size === championsRef.current.length) {
                 setGameStatus('won');
             }
             return updatedClickedIds;
@@ -91,30 +93,31 @@ const useGameLogic = (champions) => {
                 setAllFlipped(false);
             }, 500);
         }, 500)
-    }
+    }, [score, clickedIds, gameStatus, shuffleImages, cardBackImages]);
     
-    const handleNormalReset = () => {
+    const handleNormalReset = useCallback(() => {
         setScore(0);
         setClickedIds(new Set());
         setGameStatus('playingNormal');
-        setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
+        setImageOrder(shuffleArray(championsRef.current).slice(0, CARD_COUNT));
         setAllFlipped(false);
-    }
+    }, [shuffleArray]);
 
-    const handleExtremeReset = () => {
+    const handleExtremeReset = useCallback(() => {
         setScore(0);
         setClickedIds(new Set());
         setGameStatus('playingExtreme');
-        setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
+        setImageOrder(shuffleArray(championsRef.current).slice(0, CARD_COUNT));
         setAllFlipped(false);
-    }
+    }, [shuffleArray]);
 
     //Initialize image order after data fetch and champions get passed to App
     useEffect(() => {
         if (champions.length > 0) {
+            championsRef.current = champions;
             setImageOrder(shuffleArray(champions).slice(0, CARD_COUNT));
         }
-    }, [champions]);
+    }, [champions, shuffleArray]);
 
     const highScore = extremeScores.reduce((highest, current) => (current > highest ? current : highest), extremeScores[0]);
 
