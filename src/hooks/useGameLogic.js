@@ -79,21 +79,31 @@ const useGameLogic = (champions) => {
         })
         //Add .is-flipped class to trigger animation
         setAllFlipped(true);
-        setTimeout(() => {
-            //Shuffle images when cards are on back
-            shuffleImages();
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card) => {
-                card.classList.remove('is-flipped');
-                card.classList.add('reset-animation');
-            });
-            //Remove .reset-animation after animation
-            setTimeout(() => {
-                cards.forEach((card) => card.classList.remove('reset-animation'));
-                setAllFlipped(false);
+    }, [score, clickedIds, gameStatus, cardBackImages]);
+    
+    const flipTimeoutRef = useRef(null);
+
+    useEffect(() => {
+        if(allFlipped) {
+            flipTimeoutRef.current = setTimeout(() => {
+                //Shuffle images when cards are on back
+                shuffleImages();
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card) => {
+                    card.classList.remove('is-flipped');
+                    card.classList.add('reset-animation');
+                });
+                //Remove .reset-animation after animation
+                setTimeout(() => {
+                    cards.forEach((card) => card.classList.remove('reset-animation'));
+                    setAllFlipped(false);
+                }, 500);
             }, 500);
-        }, 500)
-    }, [score, clickedIds, gameStatus, shuffleImages, cardBackImages]);
+
+            return () => clearTimeout(flipTimeoutRef.current);
+        }
+    }, [allFlipped, shuffleImages]);
+
     
     const handleNormalReset = useCallback(() => {
         setScore(0);
