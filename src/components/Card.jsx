@@ -1,7 +1,7 @@
 const Card = ({ championId, onCardClick, allFlipped, chosenBack}) => {
     return (
         <div
-            className={`card ${allFlipped ? 'is-flipped' : ''}`}
+            className={`card${allFlipped ? ' is-flipped' : ''}`}
             onClick={() => !allFlipped && onCardClick(championId)}
         >
             <div className='card-inner'>
