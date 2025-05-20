@@ -26,7 +26,7 @@ const Header = ({ gameStatus, score, highScore, onNormalReset, onExtremeReset })
             )}
             {gameStatus === 'playingExtreme' && (
                 <div>
-                    <p>League of Legends currently has 140+ champions. Click each champion only once. Game becomes more difficult the more champions you click, but there will always be at least one viable option until you win.</p>
+                    <p>Champion pool now includes all 140+ champions. Click each champion only once.</p>
                     <h2>Highest Exteme Mode Score: {highScore}</h2>
                     <h2>Current Score: {score}</h2>
                     <button className='reset-btn normal-btn normal-btn-inactive' onClick={onNormalReset}>Normal</button>
