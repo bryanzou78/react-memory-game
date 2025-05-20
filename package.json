@@ -1,6 +1,7 @@
 {
   "name": "vite-react-template",
   "private": true,
+  "homepage": "https://bryanzou78.github.io/react-memory-game",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
