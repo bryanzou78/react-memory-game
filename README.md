@@ -1,8 +1,19 @@
-# React + Vite
+# react-memory-game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A card-flipping memory game built with React. Test your memory by clicking each character card without selecting the same one twice — your score resets if you click a duplicate.
 
-Currently, two official plugins are available:
+**Live demo**: https://bryanzou78.github.io/react-memory-game/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Tech stack**: React, Vite, League of Legends API
+
+## Modes
+
+- **Normal**: 10 randomly selected League of Legends champions, cards shuffle after every click
+- **Extreme**: Full champion roster — for a real challenge
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
